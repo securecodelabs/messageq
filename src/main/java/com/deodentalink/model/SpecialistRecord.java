@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Record.java to edit this template
- */
-
 package com.deodentalink.model;
 
 /**
  *
  * @author mir
  */
-public record SpecialistRecord() {
+public record SpecialistRecord(Long id, String name, String surname, String email,
+                              String phoneNumber, String title) {
 
 }

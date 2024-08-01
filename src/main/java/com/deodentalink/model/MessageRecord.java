@@ -1,14 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Record.java to edit this template
- */
-
 package com.deodentalink.model;
+
+import java.time.LocalDateTime;
 
 /**
  *
  * @author mir
  */
-public record MessageRecord() {
+public record MessageRecord(Long id, String text, MESSAGE_TYPE messageType,
+                            LocalDateTime dateTime, String phoneNumberFrom,
+                            String phoneNumberTo, Long visitId) {
 
 }
