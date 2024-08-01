@@ -1,10 +1,12 @@
 package com.deodentalink.model;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  *
  * @author mir
  */
-public record VisitorRecord(Long id, String name, String surname, String phoneNumber,
-                            String email) {
+public record VisitorRecord(@NotBlank Long id, @NotBlank String name, @NotBlank String surname,
+                            @NotBlank String phoneNumber, String email) {
 
 }

@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  *
  * @author mir
  */
-public record VisitRecord(Long id, LocalDate visitDate, LocalTime visitTime,
-                          VisitorRecord visitorRecord, SpecialistRecord specialistRecord,
+public record VisitRecord(@NotBlank Long id, @NotBlank LocalDate visitDate, @NotBlank LocalTime visitTime,
+                          @NotBlank VisitorRecord visitorRecord, @NotBlank SpecialistRecord specialistRecord,
                           List<MessageRecord> messageRecords,
                           LocalDateTime messageSendDateTime) {
 
