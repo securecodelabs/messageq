@@ -42,6 +42,7 @@ public class VisitRestControllerTest {
             .body("$.size()", is(0));
 
       Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+
       given()
             .body(visit)
             .contentType(APPLICATION_JSON)
@@ -73,5 +74,66 @@ public class VisitRestControllerTest {
               .then()
               .statusCode(400);
     }
+
+    @Test
+    public void checkVisitTimeisNotNull() {
+      given()
+            .when()
+            .get("/api/visit")
+            .then()
+            .statusCode(200)
+            .contentType(APPLICATION_JSON)
+            .body("$.size()", is(0));
+
+      Visit visit = new Visit(LocalDate.now().plusDays(1), null, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+
+      given()
+            .body(visit)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .when()
+            .post("/api/visit")
+            .then()
+            .statusCode(400);
+
+      given()
+            .when()
+            .get("/api/visit")
+            .then()
+            .statusCode(200)
+            .contentType(APPLICATION_JSON)
+            .body("$.size()", is(0));
+    }
+
+    @Test
+    public void checkVisitDateisFuture() {
+      given()
+            .when()
+            .get("/api/visit")
+            .then()
+            .statusCode(200)
+            .contentType(APPLICATION_JSON)
+            .body("$.size()", is(0));
+
+      Visit visit = new Visit(LocalDate.now().minusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+
+      given()
+            .body(visit)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .when()
+            .post("/api/visit")
+            .then()
+            .statusCode(400);
+
+      given()
+            .when()
+            .get("/api/visit")
+            .then()
+            .statusCode(200)
+            .contentType(APPLICATION_JSON)
+            .body("$.size()", is(0));
+    }
+
 
 }

@@ -21,7 +21,7 @@ public class Visit {
     public LocalDate visitDate;
 
     @NotNull
-    public LocalTime visitTime;
+    private LocalTime visitTime;
 
     public Visitor visitor;
 
@@ -48,7 +48,11 @@ public class Visit {
 	}
 
     public String getVisitTime() {
-        return visitTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        return visitTime != null ? visitTime.format(DateTimeFormatter.ofPattern("HH:mm")) : null;
+    }
+
+    public void setVisitTime(LocalTime visitTime) {
+        this.visitTime = visitTime;
     }
     
     //Calculate messageSendDateTime
