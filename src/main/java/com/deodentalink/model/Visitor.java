@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class Visitor {
 
-  @NotBlank
   public Long id;
 
   @NotBlank
@@ -21,5 +20,12 @@ public class Visitor {
   public String phoneNumber;
   
   public String email;
-  
+
+  // Required arguments constructor
+  public Visitor(String name, String surname, String phoneNumber){
+    this.name = name;
+    this.surname = surname;
+    this.phoneNumber = phoneNumber;
+  }
+
 }

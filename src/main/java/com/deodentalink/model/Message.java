@@ -3,6 +3,7 @@ package com.deodentalink.model;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *
@@ -10,16 +11,15 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class Message {
 
-  @NotBlank
   public Long id;
   
   @NotBlank
   public String text;
   
-  @NotBlank
+  @NotNull
   public MESSAGE_TYPE messageType;
 
-  @NotBlank
+  @NotNull
   public LocalDateTime dateTime;
   
   @NotBlank
@@ -29,5 +29,14 @@ public class Message {
   public String phoneNumberTo;
   
   /*Long visitId*/
+
+  // Required arguments constructor
+  public Message(String text, MESSAGE_TYPE messageType, LocalDateTime dateTime, String phoneNumberFrom, String phoneNumberTo){
+    this.text = text;
+    this.messageType = messageType;
+    this.dateTime = dateTime;
+    this.phoneNumberFrom = phoneNumberFrom;
+    this.phoneNumberTo = phoneNumberTo;
+  }
 
 }

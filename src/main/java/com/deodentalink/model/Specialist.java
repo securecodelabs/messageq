@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class Specialist {
 
-  @NotBlank
   public Long id;
 
   @NotBlank
@@ -22,5 +21,12 @@ public class Specialist {
   public String phoneNumber;
 
   public String title;
+
+  // Required arguments constructor
+  public Specialist(String name, String surname){
+    this.name = name;
+    this.surname = surname;
+  }
+
 
 }
