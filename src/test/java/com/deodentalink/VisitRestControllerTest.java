@@ -26,7 +26,7 @@ public class VisitRestControllerTest {
     public void beforeEach() {
         given()
                 .when()
-                .delete("/api/visit")
+                .delete("/api/visit/reset")
                 .then()
                 .statusCode(200);
     }
@@ -134,6 +134,89 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(0));
     }
+    
+    @Test
+    public void getAllVisits() {
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(0));
+
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+        
+        given()
+                .body(visit)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/visit")
+                .then()
+                .statusCode(201)
+                .contentType(APPLICATION_JSON)
+                .body("id", is(0));
+
+        Visit visit1 = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+
+        given()
+                .body(visit1)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/visit")
+                .then()
+                .statusCode(201)
+                .contentType(APPLICATION_JSON)
+                .body("id", is(1));
+
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(2));
+      }
+
+  @Test
+  public void getOneVisit() {
+    given()
+          .when()
+          .get("/api/visit")
+          .then()
+          .statusCode(200)
+          .contentType(APPLICATION_JSON)
+          .body("$.size()", is(0));
+
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+
+        given()
+                .body(visit)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/visit")
+                .then()
+                .statusCode(201)
+                .contentType(APPLICATION_JSON)
+                .body("id", is(0));
 
 
+        given()
+                .when()
+                .get("/api/visit/{id}", 0)
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void getNonExistingVisit() {
+        given()
+                .when()
+                .get("/api/visit/1")
+                .then()
+                .statusCode(404);
+    }
 }

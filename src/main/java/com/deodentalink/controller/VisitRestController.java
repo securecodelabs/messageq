@@ -30,7 +30,7 @@ import jakarta.ws.rs.core.Response;
 @Consumes("application/json")
 public class VisitRestController {
 
-  private AtomicLong sequenceId = new AtomicLong();
+  private AtomicLong sequenceId = new AtomicLong(0);
   //private List<Visit> visits = new ArrayList<>();
 
   private List<Visit> visits = Collections.synchronizedList(new ArrayList<>());
@@ -90,6 +90,14 @@ public class VisitRestController {
     @DELETE
     public Response deleteAll() {
         visits.clear();
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/reset")
+    public Response reset() {
+        visits.clear();
+        sequenceId.set(0);
         return Response.ok().build();
     }
 
