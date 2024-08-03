@@ -6,6 +6,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,19 +19,29 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author mir
  */
-public class Visit {
+@Entity
+@Table(name = "VISITS")
+public class Visit extends PanacheEntity{
     
-    public Long id;
+    //public Long id;
 
+    @Column(name = "VISIT_DATE", nullable = false)
     @Future
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public LocalDate visitDate;
 
+    @Column(name = "VISIT_TIME", nullable = false)
     @NotNull
-    private LocalTime visitTime;
+    public LocalTime visitTime;
 
+    @ManyToOne
+    @JoinColumn(name = "VISITOR_ID", nullable = false)
+    @NotNull
     public Visitor visitor;
 
+    @ManyToOne
+    @JoinColumn(name = "SPECIALIST_ID", nullable = false)
+    @NotNull
     public Specialist specialist;
 
     public List<Message> messages;
@@ -38,6 +54,10 @@ public class Visit {
         this.visitTime = visitTime;
         this.visitor = visitor;
         this.specialist = specialist;
+    }
+
+    public Visit(){
+
     }
 
     public LocalDate getVisitDate() {
