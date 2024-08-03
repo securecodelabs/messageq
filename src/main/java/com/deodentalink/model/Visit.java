@@ -7,10 +7,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -34,8 +37,9 @@ public class Visit extends PanacheEntity{
     @NotNull
     public LocalTime visitTime;
 
-    @ManyToOne
-    @JoinColumn(name = "VISITOR_ID", nullable = false)
+    /*@ManyToOne
+    @JoinColumn(name = "VISITOR_ID", nullable = false)*/
+    @Embedded
     @NotNull
     public Visitor visitor;
 
@@ -44,6 +48,7 @@ public class Visit extends PanacheEntity{
     @NotNull
     public Specialist specialist;
 
+    @OneToMany(mappedBy = "visit", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Message> messages;
 
     private LocalDateTime messageSendDateTime;

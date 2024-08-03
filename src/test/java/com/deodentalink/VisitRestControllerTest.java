@@ -26,7 +26,7 @@ public class VisitRestControllerTest {
     public void beforeEach() {
         given()
                 .when()
-                .delete("/api/visit/reset")
+                .delete("/api/visit")
                 .then()
                 .statusCode(200);
     }

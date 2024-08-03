@@ -1,11 +1,8 @@
 package com.deodentalink.model;
 
-import java.util.List;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
@@ -34,8 +31,8 @@ public class Visitor extends PanacheEntity{
   @Column(name = "EMAIL")
   public String email;
 
-  @OneToMany(mappedBy = "visitor")
-  public List<Visit> visits;
+  /*@OneToMany(mappedBy = "visitor")
+  public List<Visit> visits;*/
 
   // Required arguments constructor
   public Visitor(String name, String surname, String phoneNumber){
