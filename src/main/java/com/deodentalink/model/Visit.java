@@ -18,6 +18,7 @@ public class Visit {
     public Long id;
 
     @Future
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public LocalDate visitDate;
 
     @NotNull
@@ -39,21 +40,41 @@ public class Visit {
         this.specialist = specialist;
     }
 
-    public void setMessageSendDateTime(int hoursBefore){
-		messageSendDateTime = LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore);
-	}
+    public LocalDate getVisitDate() {
+        //return visitDate != null ? visitDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
+        return visitDate;
+    }
 
-	public LocalDateTime getMessageSendDateTime(){
-		return messageSendDateTime;
-	}
+    public void setVisitDate(LocalDate visitDate) {
+        this.visitDate = visitDate;
+    }
 
-    public String getVisitTime() {
-        return visitTime != null ? visitTime.format(DateTimeFormatter.ofPattern("HH:mm")) : null;
+    public String getVisitDateString() {
+        return visitDate != null ? visitDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
+    }
+
+    public LocalTime getVisitTime() {
+        //return visitTime != null ? visitTime.format(DateTimeFormatter.ofPattern("HH:mm")) : null;
+        return visitTime;
     }
 
     public void setVisitTime(LocalTime visitTime) {
         this.visitTime = visitTime;
     }
+
+    public String getVisitTimeString() {
+        return visitTime != null ? visitTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) : null;
+        //return "14:00";
+    }
+
+	public LocalDateTime getMessageSendDateTime(){
+		return messageSendDateTime;
+	}
+
+    public void setMessageSendDateTime(int hoursBefore){
+		messageSendDateTime = LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore);
+	}
+
     
     //Calculate messageSendDateTime
     //LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore));

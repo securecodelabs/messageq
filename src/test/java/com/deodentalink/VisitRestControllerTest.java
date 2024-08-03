@@ -41,10 +41,11 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(0));
 
-      Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+      Visit visit = new Visit(LocalDate.now().plusDays(3), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
 
       given()
             .body(visit)
+            .log().body()
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
             .when()
@@ -52,7 +53,8 @@ public class VisitRestControllerTest {
             .then()
             .statusCode(201)
             .contentType(APPLICATION_JSON)
-            .body("visitTime", is(visit.getVisitTime()));
+            .log().body()
+            .body("visitTime", is(visit.getVisitTimeString()));
 
       given()
             .when()
@@ -218,5 +220,94 @@ public class VisitRestControllerTest {
                 .get("/api/visit/1")
                 .then()
                 .statusCode(404);
+    }
+
+    @Test
+    public void deleteAllVisits() {
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+        Visit visit1 = new Visit(LocalDate.now().plusDays(2), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+
+        given()
+                .body(visit)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/visit")
+                .then()
+                .statusCode(201)
+                .contentType(APPLICATION_JSON)
+                .body("id", is(0));
+
+        given()
+                .log().body()
+                .body(visit1)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/visit")
+                .then()
+                .statusCode(201)
+                .contentType(APPLICATION_JSON)
+                .body("visitDate", is(visit1.getVisitDate().toString()));
+
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(2));
+
+        given()
+                .when()
+                .delete("/api/visit")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(0));
+    }
+
+    @Test
+    public void deleteOneVisit() {
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+
+        given()
+            .body(visit)
+            .contentType(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .when()
+            .post("/api/visit")
+            .then()
+            .statusCode(201)
+            .contentType(APPLICATION_JSON)
+            .body("visitTime", is(visit.getVisitTimeString()));
+
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(1));
+
+        given()
+                .when()
+                .delete("/api/visit/0")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(0));
     }
 }
