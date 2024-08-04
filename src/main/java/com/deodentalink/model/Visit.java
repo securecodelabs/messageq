@@ -1,10 +1,11 @@
 package com.deodentalink.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.CascadeType;
@@ -30,6 +31,7 @@ public class Visit extends PanacheEntity{
 
     @Column(name = "VISIT_DATE", nullable = false)
     @Future
+    @NotNull
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public LocalDate visitDate;
 
@@ -44,14 +46,17 @@ public class Visit extends PanacheEntity{
     public Visitor visitor;
 
     @ManyToOne
+    //@JsonBackReference
     @JoinColumn(name = "SPECIALIST_ID", nullable = false)
     @NotNull
     public Specialist specialist;
 
-    @OneToMany(mappedBy = "visit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "visitId", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Message> messages;
 
-    private LocalDateTime messageSendDateTime;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "MESSAGE_SEND_DATE")
+    public LocalDate messageSendDate;
 
     // Required arguments constructor
     public Visit(LocalDate visitDate, LocalTime visitTime, Visitor visitor, Specialist specialist){
@@ -62,7 +67,6 @@ public class Visit extends PanacheEntity{
     }
 
     public Visit(){
-
     }
 
     public LocalDate getVisitDate() {
@@ -74,6 +78,7 @@ public class Visit extends PanacheEntity{
         this.visitDate = visitDate;
     }
 
+    @JsonIgnore
     public String getVisitDateString() {
         return visitDate != null ? visitDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
     }
@@ -87,18 +92,23 @@ public class Visit extends PanacheEntity{
         this.visitTime = visitTime;
     }
 
+    @JsonIgnore
     public String getVisitTimeString() {
         return visitTime != null ? visitTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")) : null;
-        //return "14:00";
     }
 
-	public LocalDateTime getMessageSendDateTime(){
-		return messageSendDateTime;
+	public LocalDate getMessageSendDate(){
+		return messageSendDate;
 	}
 
-    public void setMessageSendDateTime(int hoursBefore){
-		messageSendDateTime = LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore);
+    public void setMessageSendDate(LocalDate messageSenDate){
+        this.messageSendDate = messageSenDate;
 	}
+
+    public LocalDate calculateMessageSendDate(int daysBefore){
+        return visitDate.minusDays(daysBefore);
+        //messageSendDateTime = LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore);
+    }
 
     
     //Calculate messageSendDateTime

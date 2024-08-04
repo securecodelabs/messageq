@@ -22,6 +22,8 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 @QuarkusTest
 public class VisitRestControllerTest {
 
+    Specialist createdSpecialist;
+
     @BeforeEach
     public void beforeEach() {
         given()
@@ -29,10 +31,28 @@ public class VisitRestControllerTest {
                 .delete("/api/visit")
                 .then()
                 .statusCode(200);
+        
+        given()
+                .when()
+                .delete("/api/specialist")
+                .then()
+                .statusCode(200);
+
+        Specialist specialist = new Specialist("Ieva", "Specialist");
+        createdSpecialist = given()
+                .body(specialist)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/specialist")
+                .then()
+                .statusCode(201)
+                .extract().as(Specialist.class);
     }
 
     @Test
     public void createVisit() {
+
       given()
             .when()
             .get("/api/visit")
@@ -41,11 +61,11 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(0));
 
-      Visit visit = new Visit(LocalDate.now().plusDays(3), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+      Visit visit = new Visit(LocalDate.now().plusDays(3), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
 
       given()
             .body(visit)
-            .log().body()
+            //.log().body()
             .contentType(APPLICATION_JSON)
             .accept(APPLICATION_JSON)
             .when()
@@ -53,7 +73,7 @@ public class VisitRestControllerTest {
             .then()
             .statusCode(201)
             .contentType(APPLICATION_JSON)
-            .log().body()
+            //.log().body()
             .body("visitTime", is(visit.getVisitTimeString()));
 
       given()
@@ -64,7 +84,7 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(1));
 
-        Visit visitWithId = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+        Visit visitWithId = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
         visitWithId.id = 1L;
 
         given()
@@ -77,7 +97,7 @@ public class VisitRestControllerTest {
               .statusCode(400);
     }
 
-    /*@Test
+    @Test
     public void checkVisitTimeisNotNull() {
       given()
             .when()
@@ -87,7 +107,7 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(0));
 
-      Visit visit = new Visit(LocalDate.now().plusDays(1), null, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+      Visit visit = new Visit(LocalDate.now().plusDays(1), null, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
 
       given()
             .body(visit)
@@ -117,7 +137,7 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(0));
 
-      Visit visit = new Visit(LocalDate.now().minusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialsit"));
+      Visit visit = new Visit(LocalDate.now().minusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
 
       given()
             .body(visit)
@@ -147,7 +167,7 @@ public class VisitRestControllerTest {
                 .contentType(APPLICATION_JSON)
                 .body("$.size()", is(0));
 
-        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
         
         given()
                 .body(visit)
@@ -158,9 +178,9 @@ public class VisitRestControllerTest {
                 .then()
                 .statusCode(201)
                 .contentType(APPLICATION_JSON)
-                .body("id", is(0));
+                .body("visitor.name", is("Visitor"));
 
-        Visit visit1 = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+        Visit visit1 = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
 
         given()
                 .body(visit1)
@@ -171,7 +191,7 @@ public class VisitRestControllerTest {
                 .then()
                 .statusCode(201)
                 .contentType(APPLICATION_JSON)
-                .body("id", is(1));
+                .body("visitor.name", is("Visitor"));
 
         given()
                 .when()
@@ -192,10 +212,12 @@ public class VisitRestControllerTest {
           .contentType(APPLICATION_JSON)
           .body("$.size()", is(0));
 
-        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
-
-        given()
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor11", "Surname", "+37012345678"), createdSpecialist);
+        //visit.setMessageSendDate(visit.calculateMessageSendDate(1));
+        
+        Visit result = given()
                 .body(visit)
+                .log().body()
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .when()
@@ -203,12 +225,14 @@ public class VisitRestControllerTest {
                 .then()
                 .statusCode(201)
                 .contentType(APPLICATION_JSON)
-                .body("id", is(0));
+                .body("visitor.name", is("Visitor11"))
+                .log().body()
+                .extract().as(Visit.class);
 
 
         given()
                 .when()
-                .get("/api/visit/{id}", 0)
+                .get("/api/visit/{id}", result.id)
                 .then()
                 .statusCode(200);
     }
@@ -224,8 +248,8 @@ public class VisitRestControllerTest {
 
     @Test
     public void deleteAllVisits() {
-        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
-        Visit visit1 = new Visit(LocalDate.now().plusDays(2), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
+        Visit visit1 = new Visit(LocalDate.now().plusDays(2), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
 
         given()
                 .body(visit)
@@ -236,10 +260,10 @@ public class VisitRestControllerTest {
                 .then()
                 .statusCode(201)
                 .contentType(APPLICATION_JSON)
-                .body("id", is(0));
+                .body("visitor.name", is("Visitor"));
 
         given()
-                .log().body()
+                //.log().body()
                 .body(visit1)
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
@@ -275,7 +299,7 @@ public class VisitRestControllerTest {
 
     @Test
     public void deleteOneVisit() {
-        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), new Specialist("Ieva", "Specialist"));
+        Visit visit = new Visit(LocalDate.now().plusDays(1), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
 
         given()
             .body(visit)
@@ -298,7 +322,7 @@ public class VisitRestControllerTest {
 
         given()
                 .when()
-                .delete("/api/visit/0")
+                .delete("/api/visit")
                 .then()
                 .statusCode(200);
 
@@ -309,5 +333,5 @@ public class VisitRestControllerTest {
                 .statusCode(200)
                 .contentType(APPLICATION_JSON)
                 .body("$.size()", is(0));
-    }*/
+    }
 }

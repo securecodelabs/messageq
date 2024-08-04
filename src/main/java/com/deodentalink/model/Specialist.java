@@ -1,11 +1,8 @@
 package com.deodentalink.model;
 
-import java.util.List;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
@@ -36,8 +33,9 @@ public class Specialist extends PanacheEntity {
   @Column(name = "TITLE")
   public String title;
 
-  @OneToMany(mappedBy = "specialist")
-  public List<Visit> visits;
+  //@JsonManagedReference
+  /*@OneToMany(mappedBy = "specialist")
+  public List<Visit> visits;*/
 
   // Required arguments constructor
   public Specialist(String name, String surname){

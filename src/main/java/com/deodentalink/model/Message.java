@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,12 +38,16 @@ public class Message extends PanacheEntity{
   @NotBlank
   public String phoneNumberTo;
   
+  @Column(name = "VISIT_ID", nullable = false)
+  @NotNull
+  public Long visitId;
+
   /*Long visitId*/
 
-  @ManyToOne
+  /*@ManyToOne
   @JoinColumn(name = "VISIT_ID", nullable = false)
   @NotNull
-  public Visit visit;
+  public Visit visit;*/
 
   public Message() {
 
