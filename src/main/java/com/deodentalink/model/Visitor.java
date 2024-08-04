@@ -1,18 +1,18 @@
 package com.deodentalink.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 
 /**
  *
  * @author mir
  */
-@Entity
-@Table(name = "VISITORS")
-public class Visitor extends PanacheEntity{
+//@Entity
+@Embeddable
+//@Table(name = "VISITORS")
+//public class Visitor extends PanacheEntity{
+public class Visitor{
 
   //public Long id;
 
