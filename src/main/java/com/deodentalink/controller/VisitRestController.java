@@ -50,29 +50,44 @@ public class VisitRestController {
   }
 
   @PUT
-  @Path("/{id}")
+  //@Path("/{id}")
   @Transactional
-  public Response update(@PathParam("id") Long id, @Valid Visit visit) {
-      if (id == null) {
-          throw new WebApplicationException("ID is null", Response.Status.BAD_REQUEST);
-      }
+  public Response update(@Valid Visit visit) {
+    
+    if (visit.id == null) {
+      throw new WebApplicationException("Invalid ID", Response.Status.BAD_REQUEST);
+    }
 
-      Visit existingVisit = Visit.findById(id);
-      if (existingVisit == null) {
-          return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Visit with ID " + id + " not found.")
-                        .build();
-      }
+    //System.out.println("id: " + visit.id);
+    //System.out.println("Name: " + visit.visitor.name);
 
-      existingVisit.visitDate = visit.visitDate;
-      existingVisit.visitTime = visit.visitTime;
-      existingVisit.visitor = visit.visitor;
-      existingVisit.specialist = visit.specialist;
-      existingVisit.setMessageSendDate(visit.calculateMessageSendDate(DAYS_BEFORE));
+    Visit existingVisit = Visit.findById(visit.id);
+    if (existingVisit == null) {
+      return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Visit with ID " + visit.id + " not found.")
+                    .build();
+    }
 
-      existingVisit.persist();
+    //System.out.println(existingVisit.toString());
 
-      return Response.ok(existingVisit).build();
+    //System.out.println("Existing visit visitor name and id: " + existingVisit.visitor.name + ", " + existingVisit.id);
+    existingVisit.visitDate = visit.visitDate;
+    existingVisit.visitTime = visit.visitTime;
+    existingVisit.visitor = visit.visitor;
+    existingVisit.specialist = visit.specialist;
+
+    if (visit.messages != null) {
+      existingVisit.messages.clear();
+      existingVisit.messages.addAll(visit.messages);
+    }
+    
+    existingVisit.setMessageSendDate(visit.calculateMessageSendDate(DAYS_BEFORE));
+
+    existingVisit.persist();
+
+    //System.out.println(existingVisit.toString());
+
+    return Response.ok(existingVisit).build();
   }
 
   /*@PUT

@@ -3,7 +3,9 @@ package com.deodentalink.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -12,6 +14,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -45,14 +48,14 @@ public class Visit extends PanacheEntity{
     @NotNull
     public Visitor visitor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     //@JsonBackReference
     @JoinColumn(name = "SPECIALIST_ID", nullable = false)
     @NotNull
     public Specialist specialist;
 
-    @OneToMany(mappedBy = "visitId", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Message> messages;
+    @OneToMany(mappedBy = "visitId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Message> messages = new ArrayList<>();
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "MESSAGE_SEND_DATE")
@@ -113,4 +116,17 @@ public class Visit extends PanacheEntity{
     
     //Calculate messageSendDateTime
     //LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore));
+
+    @Override
+    public String toString() {
+        return "Visit{" +
+                "id=" + id +
+                ", visitDate=" + visitDate +
+                ", visitTime=" + visitTime +
+                ", specialist=" + specialist.name +
+                ", visitor=" + visitor.name  +
+                ", messages=" + (messages != null ? messages.stream().map(Message::toString).collect(Collectors.joining(", ")) : "null") +
+                ", messageSendDate=" + messageSendDate +
+                '}';
+    }
 }

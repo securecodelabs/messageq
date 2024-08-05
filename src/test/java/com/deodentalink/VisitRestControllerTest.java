@@ -2,6 +2,7 @@ package com.deodentalink;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.BeforeEach;
@@ -156,6 +157,65 @@ public class VisitRestControllerTest {
             .contentType(APPLICATION_JSON)
             .body("$.size()", is(0));
     }
+
+    @Test
+    public void updateVisit() {
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(0));
+
+        Visit visit = new Visit(LocalDate.now().plusDays(2), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
+
+        Visit visitPersisted = given()
+                .body(visit)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .post("/api/visit")
+                .then()
+                .statusCode(201)
+                .contentType(APPLICATION_JSON)
+                .body("visitor.name", is(visit.visitor.name))
+                .extract().as(Visit.class);
+
+        given()
+                .when()
+                .get("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                .body("$.size()", is(1));
+
+        //visitPersisted.visitTime = LocalTime.MIDNIGHT;
+        visitPersisted.visitor.name = "Visitor1";
+
+        given()
+                .body(visitPersisted)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .put("/api/visit")
+                .then()
+                .statusCode(200)
+                .contentType(APPLICATION_JSON)
+                //.body("visitTime", is(LocalTime.MIDNIGHT.toString()))
+                .body("visitor.name", is(visitPersisted.visitor.name));
+
+        Visit visitWithoutId = new Visit(LocalDate.now().plusDays(2), LocalTime.NOON, new Visitor("Visitor", "Surname", "+37012345678"), createdSpecialist);
+
+        given()
+                .body(visitWithoutId)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .when()
+                .put("/api/visit")
+                .then()
+                .statusCode(400);
+    }
     
     @Test
     public void getAllVisits() {
@@ -193,13 +253,14 @@ public class VisitRestControllerTest {
                 .contentType(APPLICATION_JSON)
                 .body("visitor.name", is("Visitor"));
 
-        given()
+        List<Visit> storedVisits = given()
                 .when()
                 .get("/api/visit")
                 .then()
                 .statusCode(200)
                 .contentType(APPLICATION_JSON)
-                .body("$.size()", is(2));
+                .body("$.size()", is(2))
+                .extract().jsonPath().getList("", Visit.class);
       }
 
   @Test
@@ -217,7 +278,7 @@ public class VisitRestControllerTest {
         
         Visit result = given()
                 .body(visit)
-                .log().body()
+                //.log().body()
                 .contentType(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .when()
@@ -226,7 +287,7 @@ public class VisitRestControllerTest {
                 .statusCode(201)
                 .contentType(APPLICATION_JSON)
                 .body("visitor.name", is("Visitor11"))
-                .log().body()
+                //.log().body()
                 .extract().as(Visit.class);
 
 
@@ -241,7 +302,7 @@ public class VisitRestControllerTest {
     public void getNonExistingVisit() {
         given()
                 .when()
-                .get("/api/visit/1")
+                .get("/api/visit/0")
                 .then()
                 .statusCode(404);
     }
