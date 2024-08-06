@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.panache.common.Sort;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -113,6 +114,21 @@ public class Visit extends PanacheEntity{
         //messageSendDateTime = LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore);
     }
 
+    public static List<Visit> findAllOrderByVisitDate() {
+        return Visit.listAll(Sort.by("visitDate"));
+    }
+
+    public static Visit findBySpecialistId(long specialistId) {
+        return Visit.find("specialist.id", specialistId).firstResult();
+    }
+
+    public static List<Visit> findBySpecialistIdAll(long specialistId) {
+        return Visit.find("specialist.id", specialistId).list();
+    }
+
+    public static List<Visit> findByDate(LocalDate date, int pageIndex, int pageSize) {
+        return Visit.find("visitDate", date).page(pageIndex, pageSize).list();
+    }
     
     //Calculate messageSendDateTime
     //LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore));
