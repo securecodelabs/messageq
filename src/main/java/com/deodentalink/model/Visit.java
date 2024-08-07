@@ -118,16 +118,16 @@ public class Visit extends PanacheEntity{
         return Visit.listAll(Sort.by("visitDate"));
     }
 
-    public static Visit findBySpecialistId(long specialistId) {
+    /*public static Visit findBySpecialistId(long specialistId) {
         return Visit.find("specialist.id", specialistId).firstResult();
-    }
+    }*/
 
     public static List<Visit> findBySpecialistIdAll(long specialistId) {
         return Visit.find("specialist.id", specialistId).list();
     }
 
-    public static List<Visit> findByDate(LocalDate date, int pageIndex, int pageSize) {
-        return Visit.find("visitDate", date).page(pageIndex, pageSize).list();
+    public static List<Visit> findByDate(LocalDate date) {
+        return Visit.find("visitDate", date).list();
     }
     
     //Calculate messageSendDateTime
@@ -139,8 +139,8 @@ public class Visit extends PanacheEntity{
                 "id=" + id +
                 ", visitDate=" + visitDate +
                 ", visitTime=" + visitTime +
-                ", specialist=" + specialist.name +
-                ", visitor=" + visitor.name  +
+                ", specialist=" + specialist.name + " " + specialist.surname +
+                ", visitor=" + visitor.name  + " " + visitor.surname +
                 ", messages=" + (messages != null ? messages.stream().map(Message::toString).collect(Collectors.joining(", ")) : "null") +
                 ", messageSendDate=" + messageSendDate +
                 '}';

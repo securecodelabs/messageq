@@ -33,6 +33,9 @@ public class Specialist extends PanacheEntity {
   @Column(name = "TITLE")
   public String title;
 
+  @Column(name = "ARCHIVE")
+  public Boolean archive;
+
   //@JsonManagedReference
   /*@OneToMany(mappedBy = "specialist")
   public List<Visit> visits;*/

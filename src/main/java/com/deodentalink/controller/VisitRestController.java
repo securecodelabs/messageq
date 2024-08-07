@@ -1,5 +1,6 @@
 package com.deodentalink.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.deodentalink.model.Visit;
@@ -111,20 +112,22 @@ public class VisitRestController {
 
   @GET
   public Response getAll() {
-    List<Visit> visits = Visit.listAll();
-    return Response.ok(visits).build();
+    //List<Visit> visits = Visit.listAll();
+    //return Response.ok(visits).build();
+
+    return Response.ok(Visit.findAllOrderByVisitDate()).build();
   }
 
   @GET
   @Path("/{id}")
   public Response getOneById(@PathParam("id") long id) {
-    Visit entity = Visit.findById(id);
-    if (entity == null) {
+    Visit visit = Visit.findById(id);
+    if (visit == null) {
       return Response.status(Response.Status.NOT_FOUND)
         .entity("Visit with ID " + id + " not found.")
         .build();
     }
-    return Response.ok(entity).build();      
+    return Response.ok(visit).build();      
   }
 
   @DELETE
@@ -153,6 +156,32 @@ public class VisitRestController {
               .build();
     }
     return Response.ok().build();
+  }
+
+  @GET
+  @Path("/search/{specialistId}")
+  public Response getAllBySpecialistId(@PathParam("specialistId") long specialistId) {
+    List<Visit> visits = Visit.findBySpecialistIdAll(specialistId);
+    if (visits == null) {
+        return Response.status(Response.Status.NOT_FOUND)
+              .entity("Visits with specialist ID " + specialistId + " not found.")
+              .build();
+        //throw new WebApplicationException("Entity does not exist.", Response.Status.NOT_FOUND);
+      }
+      return Response.ok(visits).build();
+  }
+
+  @GET
+  @Path("/search/{visitDate}")
+  public Response getAllByVisitDate(@PathParam("visitDate") LocalDate visitDate) {
+    List<Visit> visits = Visit.findByDate(visitDate);
+    if (visits == null) {
+      return Response.status(Response.Status.NOT_FOUND)
+            .entity("Visits with vist date " + visitDate.toString() + " not found.")
+            .build();
+      //throw new WebApplicationException("Entity does not exist.", Response.Status.NOT_FOUND);
+    }
+    return Response.ok(visits).build();
   }
 
 }
