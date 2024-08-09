@@ -111,11 +111,9 @@ public class VisitRestController {
   }*/
 
   @GET
-  public Response getAll() {
-    //List<Visit> visits = Visit.listAll();
-    //return Response.ok(visits).build();
-
-    return Response.ok(Visit.findAllOrderByVisitDate()).build();
+  public Response getAllVisits() {
+    List<Visit> visits = Visit.findAllOrderByDateAndTime();
+    return Response.ok(visits).build();
   }
 
   @GET
@@ -159,9 +157,9 @@ public class VisitRestController {
   }
 
   @GET
-  @Path("/search/{specialistId}")
+  @Path("/specialist/{specialistId}")
   public Response getAllBySpecialistId(@PathParam("specialistId") long specialistId) {
-    List<Visit> visits = Visit.findBySpecialistIdAll(specialistId);
+    List<Visit> visits = Visit.findAllBySpecialistId(specialistId);
     if (visits == null) {
         return Response.status(Response.Status.NOT_FOUND)
               .entity("Visits with specialist ID " + specialistId + " not found.")
@@ -172,12 +170,12 @@ public class VisitRestController {
   }
 
   @GET
-  @Path("/search/{visitDate}")
+  @Path("/visitDate/{visitDate}")
   public Response getAllByVisitDate(@PathParam("visitDate") LocalDate visitDate) {
     List<Visit> visits = Visit.findByDate(visitDate);
     if (visits == null) {
       return Response.status(Response.Status.NOT_FOUND)
-            .entity("Visits with vist date " + visitDate.toString() + " not found.")
+            .entity("Visits with visit date " + visitDate.toString() + " not found.")
             .build();
       //throw new WebApplicationException("Entity does not exist.", Response.Status.NOT_FOUND);
     }

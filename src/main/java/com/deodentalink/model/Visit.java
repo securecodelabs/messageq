@@ -84,7 +84,7 @@ public class Visit extends PanacheEntity{
 
     @JsonIgnore
     public String getVisitDateString() {
-        return visitDate != null ? visitDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) : null;
+        return visitDate != null ? visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
     }
 
     public LocalTime getVisitTime() {
@@ -114,20 +114,20 @@ public class Visit extends PanacheEntity{
         //messageSendDateTime = LocalDateTime.of(visitDate, visitTime).minusHours(hoursBefore);
     }
 
-    public static List<Visit> findAllOrderByVisitDate() {
-        return Visit.listAll(Sort.by("visitDate"));
+    public static List<Visit> findAllOrderByDateAndTime() {
+        return Visit.listAll(Sort.descending("visitDate", "visitTime"));
     }
 
     /*public static Visit findBySpecialistId(long specialistId) {
         return Visit.find("specialist.id", specialistId).firstResult();
     }*/
 
-    public static List<Visit> findBySpecialistIdAll(long specialistId) {
-        return Visit.find("specialist.id", specialistId).list();
+    public static List<Visit> findAllBySpecialistId(long specialistId) {
+        return Visit.find("specialist.id", Sort.descending("visitDate", "visitTime"), specialistId).list();
     }
 
     public static List<Visit> findByDate(LocalDate date) {
-        return Visit.find("visitDate", date).list();
+        return Visit.find("visitDate", Sort.descending("visitTime"), date).list();
     }
     
     //Calculate messageSendDateTime
